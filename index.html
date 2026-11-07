@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>10년 일기</title>
+  <meta name="description" content="같은 날짜의 10년을 한 페이지에 모아 쓰는 일기장">
+  <meta name="theme-color" content="#6b4f3a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="10년 일기">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1 class="logo">10년 일기</h1>
+    <button id="install-btn" class="chip install" hidden>앱 설치</button>
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-view="day" role="tab">오늘의 페이지</button>
+      <button class="tab" data-view="calendar" role="tab">달력</button>
+      <button class="tab" data-view="search" role="tab">검색</button>
+      <button class="tab" data-view="settings" role="tab">설정</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- 하루 페이지: 같은 월/일의 10년 -->
+    <section id="view-day" class="view active">
+      <div class="date-nav">
+        <button id="prev-day" class="icon-btn" aria-label="이전 날">‹</button>
+        <div class="date-title">
+          <div id="date-label" class="date-label"></div>
+          <input type="date" id="date-picker" aria-label="날짜 선택">
+        </div>
+        <button id="next-day" class="icon-btn" aria-label="다음 날">›</button>
+      </div>
+      <div class="date-actions">
+        <button id="go-today" class="chip">오늘로</button>
+      </div>
+      <p id="question" class="question"></p>
+      <ol id="years" class="years"></ol>
+    </section>
+
+    <!-- 달력 -->
+    <section id="view-calendar" class="view">
+      <div class="date-nav">
+        <button id="prev-month" class="icon-btn" aria-label="이전 달">‹</button>
+        <div id="month-label" class="date-label"></div>
+        <button id="next-month" class="icon-btn" aria-label="다음 달">›</button>
+      </div>
+      <div id="stats" class="stats"></div>
+      <div class="calendar">
+        <div class="weekdays">
+          <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+        </div>
+        <div id="calendar-grid" class="calendar-grid"></div>
+      </div>
+      <p class="hint">숫자 아래 점은 그 날짜에 기록이 있는 해의 수입니다. 날짜를 누르면 10년 페이지로 이동합니다.</p>
+    </section>
+
+    <!-- 검색 -->
+    <section id="view-search" class="view">
+      <input type="search" id="search-input" class="search-input" placeholder="일기 내용 검색…">
+      <ul id="search-results" class="search-results"></ul>
+    </section>
+
+    <!-- 설정 -->
+    <section id="view-settings" class="view">
+      <div class="card">
+        <h2>시작 연도</h2>
+        <p class="hint">일기장의 첫 해입니다. 이 해부터 10년 동안 같은 날짜가 한 페이지에 쌓입니다.</p>
+        <div class="row">
+          <input type="number" id="start-year" min="1900" max="2999">
+          <button id="save-start-year" class="btn">저장</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>백업</h2>
+        <p class="hint">일기는 이 브라우저에만 저장됩니다. 다른 기기로 옮기거나 보관하려면 파일로 내보내세요.</p>
+        <div class="row">
+          <button id="export" class="btn">내보내기 (JSON)</button>
+          <label class="btn secondary">
+            가져오기
+            <input type="file" id="import" accept="application/json,.json" hidden>
+          </label>
+        </div>
+      </div>
+      <div class="card">
+        <h2>테마</h2>
+        <div class="row">
+          <select id="theme">
+            <option value="auto">시스템 설정 따르기</option>
+            <option value="light">밝게</option>
+            <option value="dark">어둡게</option>
+          </select>
+        </div>
+      </div>
+      <div class="card danger">
+        <h2>모두 지우기</h2>
+        <p class="hint">저장된 모든 일기를 삭제합니다. 되돌릴 수 없습니다.</p>
+        <button id="clear-all" class="btn danger">모든 일기 삭제</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
