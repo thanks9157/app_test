@@ -1,5 +1,5 @@
 // 오프라인에서도 동작하도록 앱 파일을 캐시합니다. 파일을 바꾸면 VERSION을 올려 주세요.
-const VERSION = "v1";
+const VERSION = "v2";
 const CACHE = `ten-year-diary-${VERSION}`;
 const ASSETS = [
   "./",

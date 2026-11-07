@@ -397,17 +397,39 @@
   // ---------- PWA ----------
   let deferredPrompt = null;
   const installBtn = $("install-btn");
-  window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    installBtn.hidden = false;
-  });
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isSecure = window.isSecureContext;
+
+  // 이미 설치되어 실행 중이면 버튼을 숨김
+  if (!isStandalone) {
+    // Android/데스크톱 Chrome·Edge: 설치 프롬프트 이벤트
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.hidden = false;
+    });
+    // iOS Safari는 설치 이벤트가 없으므로 항상 안내 버튼을 보여줌
+    if (isIOS) installBtn.hidden = false;
+  }
+
   installBtn.addEventListener("click", async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    installBtn.hidden = true;
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      installBtn.hidden = true;
+      return;
+    }
+    if (isIOS) {
+      alert("아이폰에서 설치하는 방법\n\n1. Safari 하단의 공유 버튼(□↑)을 누르세요.\n2. '홈 화면에 추가'를 선택하세요.\n3. 오른쪽 위 '추가'를 누르세요.");
+      return;
+    }
+    if (!isSecure) {
+      toast("HTTPS 주소에서 열어야 설치할 수 있습니다.");
+      return;
+    }
+    toast("브라우저 메뉴(⋮)에서 '앱 설치' 또는 '홈 화면에 추가'를 선택하세요.");
   });
   window.addEventListener("appinstalled", () => { installBtn.hidden = true; });
 
